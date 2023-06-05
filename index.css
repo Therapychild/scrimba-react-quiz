@@ -1,0 +1,164 @@
+* {
+  box-sizing: border-box;
+}
+
+/* Global Styles */
+html, 
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(170, 169, 169);
+}
+
+h1 {
+  font-family: 'Karla', sans-serif;
+  font-size: 31px;
+  font-weight: 700;
+  color: #293264;
+  margin: 0;
+}
+
+h5 {
+  font-family: 'Karla', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #293264;
+  margin: 0;
+}
+
+h6 {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #293264;
+  line-height: 19px;
+  margin: 0;
+}
+
+main {
+  width: 550px;
+  height: 550px;
+  border: 1px solid black;
+  position: relative;
+  margin-top: 3rem;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+section {
+  display: flex;
+  gap: .5rem;
+  padding: .75rem;
+}
+
+label {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #293264;
+  display: flex;
+  align-items: center;
+}
+
+input, select {
+  border: 1px solid #4D5B9E;
+  color: #4D5B9E;
+  background-color: white;
+  border-radius: 4px;
+  padding: .25rem .5rem;
+  font-size: 20px;
+}
+
+input {
+  width: 40px;
+  min-width: 40px;
+}
+
+select {
+  width: 120px;
+  font-size: 20px;
+  -webkit-appearance: none;
+  background-image: url("./images/expand.svg");
+  background-repeat: no-repeat;
+  background-position: 97% 50%;
+  background-size: 25%l
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  background-color: rgb(235, 235, 235);
+}
+
+button {
+  cursor: pointer;
+  border-radius: 5px;
+  width: 195px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #F5F7FB;
+  background-color: #4D5B9E;
+  padding: 16px 28px;
+  border-radius: 15px;
+  border: none;
+}
+
+/* Setup Page Styles */
+.section-setup {
+  width: 70%;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: .25rem;
+}
+
+/* Quiz Page Styles */
+.main-quiz {
+  overflow-y: auto;
+  justify-content: flex-start;
+  padding-top: 2rem;
+}
+
+.question-box {
+  z-index: 1;
+  width: 80%;
+  border-bottom: 1px solid #DBDEF0;
+  padding: 1rem 0;
+  
+}
+
+.answers {
+  display: grid;
+  grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+  padding: .5rem 0 0;
+}
+
+.answer {
+  padding: .5rem 0;
+}
+
+.correct {
+  border: 1px solid rgb(0, 255, 0);
+  background-color: rgba(0, 255, 0, .1);
+}
+
+.incorrect {
+  border: 1px solid rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, .1);
+}
+
+.actual {
+  border: 1px solid rgb(0, 0, 255);
+  background-color: rgba(0, 0, 255, .1);
+}
+
+.quiz-btn {
+  margin: 1rem;
+}
