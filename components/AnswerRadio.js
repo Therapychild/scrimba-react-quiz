@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 
 export function AnswerRadio(props) {
   const { className, name, value } = props;

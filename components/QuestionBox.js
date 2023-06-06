@@ -1,23 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import { AnswerRadio } from "./AnswerRadio";
 
 export function QuestionBox(props) {
-  const {answers, check, correctAnswer, id, question } = props;
-  const [ selected, setSelected ] = useState("");
+  const { check, handleAnswered, data} = props;
+  const {answers, correct_answer, id, isAnswered, question } = data;
 
+  // Create the radio groups and assign a border and backgroud color
+  // when checking for correct answers.
   const radios = answers.map((answer, index) => {
-    const correct = answer === correctAnswer;
+    const correct = answer === correct_answer;
     const bgColor = 
-      check && selected && selected === answer && correct ? "correct" :
-      check && selected && selected !== answer && correct ? "actual" :
-      check && selected && selected === answer && !correct ? "incorrect" :
-      ""
+      check && isAnswered && isAnswered === answer && correct ? "correct" :
+      check && isAnswered && isAnswered !== answer && correct ? "actual" :
+      check && isAnswered && isAnswered === answer && !correct ? "incorrect" :
+      "";
+
     return (
       <AnswerRadio
         correct={correct}
         key={index}
         name={id}
-        selected={selected}
         value={answer}
         className={bgColor}
       />
@@ -29,7 +31,7 @@ export function QuestionBox(props) {
       <h5>{question}</h5>
       <div
         className="answers"
-        onChange={(e) => setSelected(e.target.value)}
+        onChange={(e) => handleAnswered(e.target.value, data)}
       >
         {radios}
       </div>

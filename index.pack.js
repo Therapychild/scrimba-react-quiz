@@ -556,7 +556,7 @@ function App() {
   var _useState3 = (0, _react.useState)([]),
       _useState4 = _slicedToArray(_useState3, 2),
       data = _useState4[0],
-      setData = _useState4[1];
+      _setData = _useState4[1];
 
   var _useState5 = (0, _react.useState)(10),
       _useState6 = _slicedToArray(_useState5, 2),
@@ -590,6 +590,7 @@ function App() {
     fetch(request).then(function (response) {
       return response.json();
     }).then(function (data) {
+      var isAnsweredObject = {};
       // Format the Data:
       //   - Decode question and answers.
       //   - Add an id field.
@@ -601,23 +602,37 @@ function App() {
         question.correct_answer = (0, _htmlEntities.decode)(question.correct_answer);
         question.question = (0, _htmlEntities.decode)(question.question);
         question.id = (0, _nanoid.nanoid)();
+        question.isAnswered = null;
 
         return question;
       });
 
-      setData(formattedData);
+      _setData(formattedData);
     });
 
     _setMode("quiz");
   }
 
+  function handleAnswered(value, question) {
+    var questionArray = [];
+
+    data.map(function (item) {
+      if (item.id === question.id) {
+        item.isAnswered = value;
+        questionArray.push(item);
+      } else {
+        questionArray.push(item);
+      }
+    });
+
+    _setData(questionArray);
+  }
+
   function handleAmount(e) {
-    console.log(e.target.value);
     setAmount(e.target.value);
   }
 
   function handleDifficulty(e) {
-    console.log(e.target.value);
     setDifficulty(e.target.value);
   }
 
@@ -628,15 +643,21 @@ function App() {
     getQuestions: getQuestions
   }) : mode === "quiz" ? _react2.default.createElement(_Quiz.Quiz, {
     data: data,
+    setData: function setData() {
+      return _setData([]);
+    },
     setMode: function setMode() {
       return _setMode("setup");
-    }
+    },
+    handleAnswered: handleAnswered
+
   }) : _react2.default.createElement(
     "div",
     null,
     "Hello"
   );
 
+  // console.log("data", data);
   return display;
 }
 
@@ -732,9 +753,6 @@ function AnswerRadio(props) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 exports.QuestionBox = QuestionBox;
 
 var _react = __webpack_require__(1);
@@ -746,25 +764,25 @@ var _AnswerRadio = __webpack_require__(7);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function QuestionBox(props) {
-  var answers = props.answers,
-      check = props.check,
-      correctAnswer = props.correctAnswer,
-      id = props.id,
-      question = props.question;
+  var check = props.check,
+      handleAnswered = props.handleAnswered,
+      data = props.data;
+  var answers = data.answers,
+      correct_answer = data.correct_answer,
+      id = data.id,
+      isAnswered = data.isAnswered,
+      question = data.question;
 
-  var _useState = (0, _react.useState)(""),
-      _useState2 = _slicedToArray(_useState, 2),
-      selected = _useState2[0],
-      setSelected = _useState2[1];
 
   var radios = answers.map(function (answer, index) {
-    var correct = answer === correctAnswer;
-    var bgColor = check && selected && selected === answer && correct ? "correct" : check && selected && selected !== answer && correct ? "actual" : check && selected && selected === answer && !correct ? "incorrect" : "";
+    var correct = answer === correct_answer;
+    // console.log("check", check, "isAnswered", isAnswered, correct)
+    var bgColor = check && isAnswered && isAnswered === answer && correct ? "correct" : check && isAnswered && isAnswered !== answer && correct ? "actual" : check && isAnswered && isAnswered === answer && !correct ? "incorrect" : "";
+
     return _react2.default.createElement(_AnswerRadio.AnswerRadio, {
       correct: correct,
       key: index,
       name: id,
-      selected: selected,
       value: answer,
       className: bgColor
     });
@@ -783,7 +801,7 @@ function QuestionBox(props) {
       {
         className: "answers",
         onChange: function onChange(e) {
-          return setSelected(e.target.value);
+          return handleAnswered(e.target.value, data);
         }
       },
       radios
@@ -816,6 +834,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function Quiz(props) {
   var data = props.data,
+      handleAnswered = props.handleAnswered,
+      setData = props.setData,
       setMode = props.setMode;
 
   var _useState = (0, _react.useState)(false),
@@ -824,24 +844,28 @@ function Quiz(props) {
       setCheck = _useState2[1];
 
   var boxes = data.map(function (item, index) {
-    var answers = item.answers,
-        correct_answer = item.correct_answer,
-        id = item.id,
-        question = item.question;
-
-
     return _react2.default.createElement(_QuestionBox.QuestionBox, {
-      answers: answers,
-      correctAnswer: correct_answer,
-      id: id,
       key: index,
-      question: question,
-      check: check
+      check: check,
+      handleAnswered: handleAnswered,
+      data: item
     });
   });
 
   function checkAnswers() {
-    setCheck(true);
+    console.log(data);
+    if (data.find(function (item) {
+      return item.isAnswered === null;
+    })) {
+      alert("One or more of your questions requires an answer");
+    } else {
+      setCheck(true);
+    }
+  }
+
+  function reset() {
+    setMode();
+    setData();
   }
 
   return _react2.default.createElement(
@@ -853,7 +877,7 @@ function Quiz(props) {
       {
         className: "quiz-btn",
         onClick: function onClick() {
-          check ? setMode() : checkAnswers();
+          check ? reset() : checkAnswers();
         }
       },
       check ? "Reset Quiz" : "Check Answers"
