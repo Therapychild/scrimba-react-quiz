@@ -568,21 +568,12 @@ function App() {
       difficulty = _useState8[0],
       setDifficulty = _useState8[1];
 
-  var _useState9 = (0, _react.useState)("all"),
-      _useState10 = _slicedToArray(_useState9, 2),
-      category = _useState10[0],
-      setCategory = _useState10[1];
-
-  // Fetch the questions from the api;
+  // Fetch the questions from the api with input from the user;
 
 
   function getQuestions() {
-    console.log("calling");
     var request = "https://opentdb.com/api.php?amount=" + amount + "&type=multiple";
 
-    if (category !== "all") {
-      request += "&category=" + category;
-    }
     if (difficulty !== "easy") {
       request += "&difficulty=" + (difficulty > 50 ? 50 : difficulty);
     }
@@ -613,6 +604,7 @@ function App() {
     _setMode("quiz");
   }
 
+  // Assign the selected answer to the question object;
   function handleAnswered(value, question) {
     var questionArray = [];
 
@@ -628,10 +620,13 @@ function App() {
     _setData(questionArray);
   }
 
+  // Update the number of questions as requested by the user.
   function handleAmount(e) {
     setAmount(e.target.value);
   }
 
+  // Update the difficulty of the questions as requested by
+  // the user.
   function handleDifficulty(e) {
     setDifficulty(e.target.value);
   }
@@ -650,14 +645,12 @@ function App() {
       return _setMode("setup");
     },
     handleAnswered: handleAnswered
-
   }) : _react2.default.createElement(
     "div",
     null,
     "Hello"
   );
 
-  // console.log("data", data);
   return display;
 }
 
@@ -765,18 +758,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function QuestionBox(props) {
   var check = props.check,
-      handleAnswered = props.handleAnswered,
-      data = props.data;
+      data = props.data,
+      handleAnswered = props.handleAnswered;
   var answers = data.answers,
       correct_answer = data.correct_answer,
       id = data.id,
       isAnswered = data.isAnswered,
       question = data.question;
 
+  // Create the radio groups and assign a border and backgroud color
+  // when checking for correct answers.
 
   var radios = answers.map(function (answer, index) {
     var correct = answer === correct_answer;
-    // console.log("check", check, "isAnswered", isAnswered, correct)
     var bgColor = check && isAnswered && isAnswered === answer && correct ? "correct" : check && isAnswered && isAnswered !== answer && correct ? "actual" : check && isAnswered && isAnswered === answer && !correct ? "incorrect" : "";
 
     return _react2.default.createElement(_AnswerRadio.AnswerRadio, {
@@ -843,22 +837,38 @@ function Quiz(props) {
       check = _useState2[0],
       setCheck = _useState2[1];
 
+  var _useState3 = (0, _react.useState)(0),
+      _useState4 = _slicedToArray(_useState3, 2),
+      correctAnswers = _useState4[0],
+      setCorrectAnswers = _useState4[1];
+
   var boxes = data.map(function (item, index) {
     return _react2.default.createElement(_QuestionBox.QuestionBox, {
       key: index,
       check: check,
       handleAnswered: handleAnswered,
-      data: item
+      data: item,
+      setCorrectAnswers: setCorrectAnswers
     });
   });
 
+  // If any question object does not have an assignes answer,
+  // throw an alert. Otherwise set check to true;
   function checkAnswers() {
-    console.log(data);
     if (data.find(function (item) {
       return item.isAnswered === null;
     })) {
       alert("One or more of your questions requires an answer");
     } else {
+      var score = 0;
+      data.map(function (question) {
+        if (question.correct_answer === question.isAnswered) {
+          score++;
+        }
+
+        setCorrectAnswers(score);
+      });
+
       setCheck(true);
     }
   }
@@ -872,6 +882,11 @@ function Quiz(props) {
     "main",
     { className: "main-quiz" },
     boxes,
+    check && _react2.default.createElement(
+      "h5",
+      { className: "score" },
+      "You got " + correctAnswers + " out of " + data.length + " correct!"
+    ),
     _react2.default.createElement(
       "button",
       {

@@ -159,6 +159,10 @@ button {
   background-color: rgba(0, 0, 255, .1);
 }
 
+.score {
+  margin-top: 1rem;
+}
+
 .quiz-btn {
   margin: 1rem;
 }

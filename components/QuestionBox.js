@@ -2,7 +2,7 @@ import React from "react";
 import { AnswerRadio } from "./AnswerRadio";
 
 export function QuestionBox(props) {
-  const { check, handleAnswered, data} = props;
+  const { check, data, handleAnswered, } = props;
   const {answers, correct_answer, id, isAnswered, question } = data;
 
   // Create the radio groups and assign a border and backgroud color
